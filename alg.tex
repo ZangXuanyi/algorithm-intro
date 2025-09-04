@@ -88,6 +88,8 @@
 \maketitle
 \tableofcontents
 
+\newpage
+
 \section{引言}
 
 一般认为，程序由数据结构和算法两部分组成。数据结构是组织和存储数据的方式，而\textbf{算法}指的是解决问题的步骤和方法。它们在计算机科学中起着至关重要的作用，帮助我们高效地处理数据和执行任务。在考试中，理解和应用算法是关键技能。本文针对计算概论A课程的考察范围，简单介绍了几种常见的算法类型及其应用。
@@ -110,7 +112,9 @@
 
 \subsection{STL的应用}
 
-STL（Standard Template Library）是C++标准库的一部分，提供了一组通用的模板类和函数，用于数据结构和算法的实现。一般情况下，我们可以使用STL来简化代码，提高开发效率。对于大一而言，我们主要关注以下数据结构：
+STL（Standard Template Library）是C++标准库的一部分，提供了一组通用的模板类和函数，用于数据结构和算法的实现。
+
+对于大一而言，我们主要关注以下数据结构：
 \begin{itemize}
     \item 普通数组：用\texttt{vector}来代替传统的数组，提供动态大小和丰富的操作方法。
     \item 字符串：用\texttt{string}来处理字符串，提供方便的字符串操作函数。
@@ -139,6 +143,7 @@ STL（Standard Template Library）是C++标准库的一部分，提供了一组�
     \item \texttt{std::upper\_bound}：找到第一个大于给定值的元素。
 \end{itemize}
 
+我个人非常建议同学们在考试的时候多使用\texttt{STL}。它不仅能够大大地简化代码，代码的执行效率往往也比手写的代码更高。\textbf{对于大一的学生而言，如果你使用了\texttt{STL}但是考试的时候出现了WA、TLE、MLE等问题，请重新审视你算法的正确性与高效性；如果你确信你的算法是正确且高效的但是还是出现TLE或MLE，则说明该题目并非你能够解决的，建议跳过，先做后面的题目。}
 
 \section{常见算法}
 
@@ -376,6 +381,8 @@ int average_wait = total_wait / n; // 计算平均等待时间
     该问题可以通过递推来解决。我们可以定义一个数组\texttt{dp}，其中\texttt{dp[i]}表示爬到第$i$级台阶的不同方式数。显然，\texttt{dp[0]=1}（不需要爬任何台阶），\texttt{dp[1]=1}（只有一种方式爬到第一级台阶）。对于$i \geq 2$，我们可以通过以下递推关系来计算\texttt{dp[i]}：
     $$dp[i] = dp[i-1] + dp[i-2]$$
     这是因为要到达第$i$级台阶，可以从第$i-1$级台阶爬1级上来，或者从第$i-2$级台阶爬2级上来。
+
+    这个递推也可以认为是动态规划的最初级阶段。
 
     代码实现如下：
 \begin{lstlisting}[language=C++]
@@ -718,5 +725,336 @@ BFS & 图或树的遍历 & $O(V + E)$ \\
 \end{tabular}
 \caption{常见搜索算法的适用场景和时间复杂度比较}
 \end{table}
+
+\section{练习}
+
+\subsection{简单题（5 题）}
+
+\begin{enumerate}[label=\textbf{S\arabic*.}]
+\item \textbf{零的个数}\\
+  题面：给定一个整数 $n$（$1\le n\le 10^9$），求 $n!$ 末尾有多少个连续的 0。\\
+  输入：一行，一个整数 $n$。\\
+  输出：一行，一个整数，表示末尾 0 的个数。
+
+\item \textbf{只出现一次的字母}\\
+  题面：给定一个仅由小写字母构成的字符串 $s$（$1\le |s|\le 10^5$），找出第一个仅出现一次的字符，输出该字符；若不存在输出 \texttt{'\#'}。\\
+  输入：一行，字符串 $s$。\\
+  输出：一行，一个字符。
+
+\item \textbf{回文判定}\\
+  题面：给定一个长度不超过 $10^5$ 的字符串 $s$，判断其是否为回文串（正读反读相同）。\\
+  输入：一行，字符串 $s$。\\
+  输出：一行，\texttt{YES} 或 \texttt{NO}。
+
+\item \textbf{两数之和}\\
+  题面：给定一个长度为 $n$（$2\le n\le 10^4$）的整数数组 $a$ 和目标值 $t$（$|t|\le 10^9$），任意输出一组下标对 $(i,j)$ 使得 $a_i+a_j=t$；若有多解输出任意一组；若无解输出 \texttt{-1 -1}。\\
+  输入：第一行两个整数 $n,t$；第二行 $n$ 个整数。\\
+  输出：一行，两个整数表示下标（从 0 开始）。
+
+\item \textbf{最大值与最小值}\\
+  题面：给定 $n$（$1\le n\le 10^5$）个 32 位有符号整数，输出最大值与最小值之差。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。
+\end{enumerate}
+
+\subsection{中等题（5 题）}
+
+\begin{enumerate}[label=\textbf{M\arabic*.}]
+\item \textbf{滑动窗口最大值}\\
+  题面：给定一个长度为 $n$（$1\le n\le 10^6$）的数组 $a$ 和整数 $k$（$1\le k\le n$），输出每个长度为 $k$ 的连续子数组的最大值。\\
+  输入：第一行两个整数 $n,k$；第二行 $n$ 个整数。\\
+  输出：一行，共 $n-k+1$ 个整数，空格分隔。\\
+  提示：用双端队列维护“有用”下标，保证队头始终为当前窗口最大值下标。
+
+\item \textbf{下一个排列}\\
+  题面：给定一个 $n$（$1\le n\le 10^5$）元排列 $p$，输出字典序比 $p$ 大的最小排列；若 $p$ 已是最大排列则输出最小排列（即循环首位）。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个互异整数 $p_1,\dots ,p_n$。\\
+  输出：一行，$n$ 个整数表示下一个排列。\\
+  提示：STL 已提供 \texttt{std::next\_permutation}，但请手动实现一次以理解原理。
+
+\item \textbf{最大子段和}\\
+  题面：给定一个长度为 $n$（$1\le n\le 10^5$）的整数序列 $a_i$（$|a_i|\le 10^9$），求连续子数组的最大和。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。\\
+  提示：Kadane 算法，扫描一遍维护当前段和与全局最大值。
+
+\item \textbf{二进制中 1 的个数}\\
+  题面：给定 $T$（$1\le T\le 10^5$）个 64 位无符号整数 $x$，对每个 $x$ 输出其二进制表示中 1 的个数。\\
+  输入：第一行一个整数 $T$；接下来 $T$ 行每行一个整数 $x$。\\
+  输出：共 $T$ 行，每行一个整数。\\
+  提示：本题纯考STL。
+
+\item \textbf{合并区间}\\
+  题面：给定 $n$（$1\le n\le 10^5$）个闭区间 $[l_i,r_i]$，合并所有重叠区间并输出最终不重叠的区间列表，按左端点升序。\\
+  输入：第一行一个整数 $n$；接下来 $n$ 行每行两个整数 $l_i,r_i$。\\
+  输出：第一行一个整数 $m$ 表示合并后区间数；接下来 $m$ 行每行两个整数表示区间。\\
+  提示：先按左端点排序，再线性扫描合并。
+\end{enumerate}
+
+\subsection{困难题（5 题）}
+
+\begin{enumerate}[label=\textbf{H\arabic*.}]
+\item \textbf{最长重复子数组}\\
+  题面：给定两个长度均不超过 $5\,000$ 的整数数组 $A,B$，求它们最长公共连续子数组的长度。\\
+  输入：第一行两个整数 $n,m$；第二行 $n$ 个整数表示 $A$；第三行 $m$ 个整数表示 $B$。\\
+  输出：一行，一个整数。\\
+  提示：DP，令 $dp[i][j]$ 表示以 $A_{i-1},B_{j-1}$ 结尾的最长公共后缀长度，转移方程为
+  $$dp[i][j]=\begin{cases}
+  dp[i-1][j-1]+1,&A_{i-1}=B_{j-1}\\[2pt]
+  0,&\text{otherwise}.
+  \end{cases}$$
+  答案即 $\max dp[i][j]$。滚动数组可降维至 $O(m)$ 空间。
+
+\item \textbf{柱状图中最大矩形}\\
+  题面：给定 $n$（$1\le n\le 10^5$）个非负整数 $h_1,\dots ,h_n$ 表示柱状图高度，求能勾勒出的最大矩形面积。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。\\
+  提示：单调栈，维护递增高度下标，每次弹出时计算以该高为高的最大宽度。
+
+\item \textbf{缺失的第一个正整数}\\
+  题面：给定一个长度为 $n$（$1\le n\le 10^5$）的整数数组 $a$，元素范围 $[-10^9,10^9]$，找出缺失的最小正整数，要求时间 $O(n)$、空间 $O(1)$（返回值不计）。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。\\
+  提示：利用原数组做哈希，将值为 $i$ 的数放到下标 $i-1$ 处，再扫描一次即可。
+
+\item \textbf{字符串相乘}\\
+  题面：给定两个不含前导零的非负整数字符串 $s,t$（长度均 $\le 10^4$），返回它们乘积的字符串形式。\\
+  输入：两行，分别表示 $s$ 和 $t$。\\
+  输出：一行，乘积字符串。\\
+  提示：模拟竖式乘法，逐位相乘并处理进位，可用 \texttt{vector<int>} 存储中间结果。
+
+\item \textbf{旋转函数}\\
+  题面：给定一个长度为 $n$（$1\le n\le 10^5$）的整数数组 $a$，定义旋转函数
+  $$F(k)=\sum_{i=0}^{n-1} i\cdot a_{(i+k)\bmod n},\qquad k=0,\dots ,n-1.$$
+  求 $\max_{0\le k<n} F(k)$。\\
+  输入：第一行一个整数 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。\\
+  提示：先算 $F(0)$，再推递推式
+  $$F(k)=F(k-1)+\sum a - n\cdot a_{n-k},\qquad k=1,\dots ,n-1,$$
+  即可 $O(n)$ 求出所有 $F(k)$。
+\end{enumerate}
+
+\section{练习题参考代码}
+
+\begin{enumerate}[label=\textbf{练习\arabic*.}]
+\item \textbf{数字和}（对应原文练习 3.1）
+\begin{lstlisting}
+long long ans=0;
+for(long long i=1;i<=n;i++){
+    string t=to_string(i);
+    for(char c:t) ans+=c-'0';
+}
+cout<<ans;
+\end{lstlisting}
+
+\item \textbf{和为偶数的二元组}（对应原文练习 3.2）
+\begin{lstlisting}
+int even=0,odd=0;
+for(int x:a) (x%2?odd:even)++;
+cout<<1LL*even*(even-1)/2 + 1LL*odd*(odd-1)/2;
+\end{lstlisting}
+
+\item \textbf{最多完成题目数}（对应原文练习 3.3）
+\begin{lstlisting}
+sort(t+1,t+n+1,[](auto&a,auto&b){return a.d<b.d;});
+int cnt=0,now=0;
+for(int i=1;i<=n;i++)
+    if(now+t[i].t<=t[i].d){cnt++; now+=t[i].t;}
+cout<<cnt;
+\end{lstlisting}
+
+\item \textbf{统计逆序对}（对应原文练习 3.4）
+\begin{lstlisting}
+int merge(int l,int r){
+    if(l>=r) return 0; int m=(l+r)/2,inv=merge(l,m)+merge(m+1,r);
+    int i=l,j=m+1,k=0;
+    while(i<=m&&j<=r)
+        if(a[i]<=a[j]) tmp[k++]=a[i++];
+        else tmp[k++]=a[j++],inv+=m-i+1;
+    while(i<=m) tmp[k++]=a[i++];
+    while(j<=r) tmp[k++]=a[j++];
+    for(i=l;i<=r;i++) a[i]=tmp[i-l];
+    return inv;
+}
+cout<<merge(0,n-1);
+\end{lstlisting}
+
+\item \textbf{最长回文子序列}（对应原文练习 3.5）
+\begin{lstlisting}
+vector<vector<int>> dp(n,vector<int>(n));
+for(int i=0;i<n;i++) dp[i][i]=1;
+for(int len=2;len<=n;len++)
+    for(int i=0;i+len<=n;i++){
+        int j=i+len-1;
+        if(s[i]==s[j]) dp[i][j]=2+(len>2?dp[i+1][j-1]:0);
+        else dp[i][j]=max(dp[i+1][j],dp[i][j-1]);
+    }
+cout<<dp[0][n-1];
+\end{lstlisting}
+\end{enumerate}
+
+\section{课后练习参考解答}
+
+\begin{enumerate}[label=\textbf{S\arabic*.}]
+\item \textbf{零的个数}：
+每 5 的倍数贡献至少一个 0，25 的倍数额外再贡献一个……累加 n/5 + n/25 + n/125 + … 即可。
+\begin{lstlisting}
+int cnt=0;
+for(long long i=5;i<=n;i*=5) cnt+=n/i;
+cout<<cnt;
+\end{lstlisting}
+
+\item \textbf{只出现一次的字母}：先扫一遍统计频次，再扫一遍输出第一个频次为 1 的字符。
+\begin{lstlisting}
+int f[26]={};
+for(char c:s) f[c-'a']++;
+for(char c:s) if(f[c-'a']==1){cout<<c; return;}
+cout<<'#';
+\end{lstlisting}
+
+\item \textbf{回文判定}：双指针从两端向中间走，遇到不等立即判 NO，走完则 YES。
+\begin{lstlisting}
+int l=0,r=s.size()-1;
+while(l<r) if(s[l++]!=s[r--]){cout<<"NO"; return;}
+cout<<"YES";
+\end{lstlisting}
+
+\item \textbf{两数之和}：用 \texttt{unordered\_map} 存“之前见过的数→下标”，每次查询 \texttt{target - x} 是否存在，存在即得答案。
+\begin{lstlisting}
+unordered_map<int,int> mp;
+for(int i=0;i<n;i++){
+    int x; cin>>x;
+    if(mp.count(t-x)){cout<<mp[t-x]<<" "<<i; return;}
+    mp[x]=i;
+}
+cout<<"-1 -1";
+\end{lstlisting}
+
+\item \textbf{最大值与最小值}：方法很多，这里用一次遍历维护最大最小值。
+\begin{lstlisting}
+int mn=INT_MAX,mx=INT_MIN,x;
+while(n--){cin>>x; mn=min(mn,x); mx=max(mx,x);}
+cout<<mx-mn;
+\end{lstlisting}
+\end{enumerate}
+
+\begin{enumerate}[label=\textbf{M\arabic*.}]
+\item \textbf{滑动窗口最大值}：双端队列存“有用下标”，保证队头永远是当前窗口最大且有效，新元素把队尾“永不可能再夺冠”的小值全弹走。
+\begin{lstlisting}
+deque<int> q;
+for(int i=0;i<n;i++){
+    while(!q.empty()&&q.front()<=i-k) q.pop_front();
+    while(!q.empty()&&a[q.back()]<=a[i]) q.pop_back();
+    q.push_back(i);
+    if(i>=k-1) cout<<a[q.front()]<<" ";
+}
+\end{lstlisting}
+
+\item \textbf{下一个排列}：从后往前找第一对“上坡”$i-1$, i；再从后往前找第一个大于 $p[i-1]$ 的位置 $j$；交换后把 $i$ 之后部分反转即得最小增排列。
+\begin{lstlisting}
+int i=n-1;
+while(i>0&&p[i-1]>=p[i]) i--;
+if(i){
+    int j=n-1;
+    while(p[j]<=p[i-1]) j--;
+    swap(p[i-1],p[j]);
+}
+reverse(p.begin()+i,p.end());
+\end{lstlisting}
+
+\item \textbf{最大子段和}：经典的 Kadane 算法。扫一遍，维护“以当前元素结尾的最大段和”\texttt{cur}，全局最优 \texttt{best = max(best, cur)}。
+\begin{lstlisting}
+long long cur=0,best=LLONG_MIN;
+for(int x:a){
+    cur=max<long long>(x,cur+x);
+    best=max(best,cur);
+}
+cout<<best;
+\end{lstlisting}
+
+\item \textbf{二进制中 1 的个数}：方法很多。GCC 内置 \texttt{\_\_builtin\_popcountll} 一条指令完成；或者用 Brian Kernighan 算法，\texttt{x \&= x-1} 每次消去最低位的 1；或者用\texttt{std::bitset}。
+\begin{lstlisting}
+while(T--){
+    unsigned long long x; cin>>x;
+    cout<<__builtin_popcountll(x)<<"\n";
+}
+\end{lstlisting}
+
+\item \textbf{合并区间}：先按左端点排序，然后线性扫描：若当前区间与结果最后一区间重叠就合并右端点，否则直接压入新区间。
+\begin{lstlisting}
+sort(iv.begin(),iv.end());
+vector<pair<int,int>> r;
+for(auto &x:iv){
+    if(r.empty()||x.first>r.back().second) r.push_back(x);
+    else r.back().second=max(r.back().second,x.second);
+}
+\end{lstlisting}
+\end{enumerate}
+
+\begin{enumerate}[label=\textbf{H\arabic*.}]
+\item \textbf{最长重复子数组}经典 DP。$dp[i][j]$ 表示“以 $A[i-1]$ 与 $B[j-1]$ 结尾”的最长公共连续子数组长度。若 $A[i-1]==B[j-1]$ 则 $dp[i][j]=dp[i-1][j-1]+1$，否则 0。答案即所有 dp[i][j] 的最大值。
+\begin{lstlisting}
+vector<int> dp(m+1),prev(m+1);
+int ans=0;
+for(int i=1;i<=n;i++){
+    for(int j=1;j<=m;j++){
+        prev[j]=dp[j];
+        dp[j]=(A[i-1]==B[j-1]?prev[j-1]+1:0);
+        ans=max(ans,dp[j]);
+    }
+}
+cout<<ans;
+\end{lstlisting}
+
+\item \textbf{柱状图中最大矩形}:维持栈内下标对应高度递增。每遇到一个比栈顶低的高度 $h[i]$，就不断弹出栈顶 $ht$，此时以 $ht$ 为高的最大宽度就是“$\text{当前坐标} - \text{新栈顶} - 1$”，更新全局面积。
+\begin{lstlisting}
+stack<int> st; st.push(-1);
+int ans=0;
+for(int i=0;i<=n;i++){
+    int h=(i==n?0:h[i]);
+    while(st.top()!=-1&&h[h[st.top()]]){
+        int ht=h[st.top()]; st.pop();
+        ans=max(ans,ht*(i-st.top()-1));
+    }
+    st.push(i);
+}
+cout<<ans;
+\end{lstlisting}
+
+\item \textbf{缺失的第一个正整数}：利用“下标天然哈希”，把值 v 放到位置 v-1 上。两次遍历，第一次不断交换直到 $1...n$ 范围内每个数归位，第二次找第一个 $a[i]!=i+1$ 的位置即为答案。若都合法，则返回 n+1。
+\begin{lstlisting}
+for(int i=0;i<n;i++)
+    while(a[i]>0&&a[i]<=n&&a[a[i]-1]!=a[i])
+        swap(a[i],a[a[i]-1]);
+for(int i=0;i<n;i++) if(a[i]!=i+1){cout<<i+1; return;}
+cout<<n+1;
+\end{lstlisting}
+
+\item \textbf{字符串相乘}：模拟竖式乘法，结果最长为 $|s|+|t|$ 位，倒序存储在数组中，然后统一处理进位，最后跳过前导零输出。
+\begin{lstlisting}
+vector<int> res(s.size()+t.size(),0);
+for(int i=s.size()-1;i>=0;i--)
+    for(int j=t.size()-1;j>=0;j--){
+        int mul=(s[i]-'0')*(t[j]-'0');
+        int sum=mul+res[i+j+1];
+        res[i+j+1]=sum%10; res[i+j]+=sum/10;
+    }
+string ans; for(int x:res) if(!(ans.empty()&&x==0)) ans+=char(x+'0');
+cout<<(ans.empty()?"0":ans);
+\end{lstlisting}
+
+\item \textbf{旋转函数}：先算 $F(0)=\sum i \times a[i]$和总和$S =\sum a[i]$。关键是观察到 $F(k)=F(k-1)+S-n\times a[n-k]$，或者说整体向右转1位以后，每一个元素下标加1，但是绕回来的最后一个元素被减了n次。
+\begin{lstlisting}
+long long sum=0,f0=0;
+for(int i=0;i<n;i++){sum+=a[i]; f0+=1LL*i*a[i];}
+long long best=f0,cur=f0;
+for(int k=1;k<n;k++){
+    cur+=sum-1LL*n*a[n-k];
+    best=max(best,cur);
+}
+cout<<best;
+\end{lstlisting}
+\end{enumerate}
+
 
 \end{document}
