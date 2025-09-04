@@ -1,0 +1,716 @@
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{algorithm2e}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+
+\setlist{nosep}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{white},
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single
+}
+
+\geometry{b5paper, margin=0.5in}
+
+%------- 调好的三色 -------
+\definecolor{expbg}{RGB}{255,245,240}   % 例题背景
+\definecolor{expfr}{RGB}{255,94,77}    % 例题边框/标题
+
+\definecolor{solnfr}{RGB}{46,204,113}  % 解答边框/标题
+\definecolor{solnbg}{RGB}{240,255,240} % 解答背景
+
+\definecolor{probfr}{RGB}{0,123,255}   % 习题边框/标题
+\definecolor{probbg}{RGB}{240,247,255} % 习题背景
+
+%------- 三种环境 -------
+\newtcolorbox[auto counter,number within=section]{example}{
+  title={例题~\thetcbcounter},
+  enhanced,
+  breakable,
+  colback=expbg,
+  colframe=expfr,
+  coltitle=black,
+  fonttitle=\bfseries,
+  top=4pt,bottom=4pt,left=8pt,right=8pt,
+  attach title to upper,
+  after title={\quad}
+}
+
+\newtcolorbox{soln}{
+  title={解答},
+  enhanced,
+  breakable,
+  colback=solnbg,
+  colframe=solnfr,
+  coltitle=black,
+  fonttitle=\bfseries,
+  top=4pt,bottom=4pt,left=8pt,right=8pt,
+  attach title to upper,
+  after title={\quad}
+}
+
+\newtcolorbox[auto counter,number within=section]{problem}{
+  title={练习},
+  enhanced,
+  breakable,
+  colback=probbg,
+  colframe=probfr,
+  coltitle=black,
+  fonttitle=\bfseries,
+  top=4pt,bottom=4pt,left=8pt,right=8pt,
+  attach title to upper,
+  after title={\quad}
+}
+
+\title{{\Huge\textbf{算法简明指南}}}
+\author{臧炫懿}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{引言}
+
+一般认为，程序由数据结构和算法两部分组成。数据结构是组织和存储数据的方式，而\textbf{算法}指的是解决问题的步骤和方法。它们在计算机科学中起着至关重要的作用，帮助我们高效地处理数据和执行任务。在考试中，理解和应用算法是关键技能。本文针对计算概论A课程的考察范围，简单介绍了几种常见的算法类型及其应用。
+
+本文的代码示例均是\textbf{不完整}的\texttt{C++}代码片段，读者需要自行补全。
+
+\section{算法基础知识}
+
+\subsection{算法的复杂度}
+
+算法的复杂度指的是算法在执行过程中所需的资源量，通常包括时间复杂度和空间复杂度。时间复杂度衡量算法执行所需的时间，空间复杂度衡量算法执行所需的内存空间。
+
+一般的，有三种符号来表示算法的复杂度：
+\begin{itemize}
+    \item 大O符号（$O$）：表示算法的上界，描述在最坏情况下的复杂度。
+    \item 大Omega符号（$\Omega$）：表示算法的下界，描述在最好情况下的复杂度。
+    \item 大Theta符号（$\Theta$）：表示算法的紧确界，描述在平均情况下的复杂度。
+\end{itemize}
+一般的，我们用n表示问题的规模，而这些符号后面跟着的函数则表示随着n的增长，算法复杂度的增长趋势。例如，$O(n^2)$表示算法的时间复杂度在最坏情况下是平方级别的，而具体的常数和低阶项等则被忽略。
+
+\subsection{STL的应用}
+
+STL（Standard Template Library）是C++标准库的一部分，提供了一组通用的模板类和函数，用于数据结构和算法的实现。一般情况下，我们可以使用STL来简化代码，提高开发效率。对于大一而言，我们主要关注以下数据结构：
+\begin{itemize}
+    \item 普通数组：用\texttt{vector}来代替传统的数组，提供动态大小和丰富的操作方法。
+    \item 字符串：用\texttt{string}来处理字符串，提供方便的字符串操作函数。
+    \item 需要长期排序：用\texttt{set}和\texttt{map}来存储有序集合和键值对，这两个数据结构天然有序。
+    \item 需要快速查找：用\texttt{unordered\_set}和\texttt{unordered\_map}来存储无序集合和键值对，这两个数据结构基于哈希表，提供平均$O(1)$的查找时间。
+    \item 需要最大、最小：用\texttt{priority\_queue}来实现优先队列，队列首就是最大或最小元素。
+    \item 需要在头尾插入删除：用\texttt{deque}来实现双端队列，支持在两端高效地插入和删除元素。
+    \item 需要在中间频繁插入删除：用\texttt{list}来实现双向链表，支持在任意位置高效地插入和删除元素。
+\end{itemize}
+
+至于\texttt{STL}已经实现的算法，常见的有：
+\begin{itemize}
+    \item \texttt{std::sort}：排序元素。
+    \item \texttt{std::binary\_search}：二分查找元素。
+    \item \texttt{std::find}：查找元素，和二分查找相比不需要元素有序。
+    \item \texttt{std::count}：统计元素出现的次数。
+    \item \texttt{std::reverse}：反转元素顺序。
+    \item \texttt{std::accumulate}：计算元素的累加和。
+    \item \texttt{std::max\_element}：找到最大元素。
+    \item \texttt{std::min\_element}：找到最小元素。
+    \item \texttt{std::shuffle}：随机打乱元素顺序。
+    \item \texttt{std::unique}：去除重复元素。
+    \item \texttt{std::for\_each}：对每个元素执行操作。
+    \item \texttt{std::nth\_element}：找到第n小的元素。
+    \item \texttt{std::lower\_bound}：找到第一个不小于给定值的元素。
+    \item \texttt{std::upper\_bound}：找到第一个大于给定值的元素。
+\end{itemize}
+
+
+\section{常见算法}
+
+\subsection{模拟算法}
+
+模拟算法是最简单的算法之一。该算法的含义是通过模拟人类解决问题的实际过程来完成最终的计算任务。该类算法适用于\textbf{解决问题的步骤非常明确}的场景。
+
+\begin{example}
+    素数在数学中是一个非常重要的概念，它指的是只能被1和它本身整除的自然数。素数在密码学、数据加密等领域有着广泛的应用。一般我们可以使用筛法找到素数：在一系列整数中，先找到最小的素数（2），然后将它的倍数都去掉；然后再找到下一个最小的素数（3），再将它的倍数都去掉；如此反复，直到所有的数都被处理完。请编写一个程序，这个程序接受一些整数，然后输出这些整数是不是素数。
+    
+    \textbf{输入}：m+1行，第一行是一个整数m，表示接下来有m个整数需要判断；接下来的m行，每行一个整数n。n的数值在0到1000之间。
+
+    \textbf{输出}：m行，每行一个字符串，表示对应的整数是不是素数。如果是素数，输出“YES”，否则输出“NO”，如果输入的是1，输出“NA”。
+\end{example}
+
+\begin{soln}
+    该问题的解决步骤非常明确，我们可以直接模拟这个过程。具体来说，我们可以先预处理出1000以内的所有素数，然后对于每个输入的整数，直接判断它是否在素数列表中即可。上述题目给出了一个处理数的方法“筛法”，因此解决问题的步骤非常明确，适合使用模拟算法。
+
+    我们知道，数组的索引天然是自然数，非常适宜做这种标记，在筛完之后只需要按索引查询即可；想到“按索引查询”，立刻想到顺序表\texttt{vector}。于是，我们得以模拟过程，得到如下代码：
+\begin{lstlisting}[language=C++]
+vector<int> primes(1001, 1); // 初始化一个大小为1001的数组，初始值全为1
+primes[0] = primes[1] = 0; // 0和1不是素数
+for (int i = 2; i * i <= 1000; ++i) { // 遍历每个数
+    if (primes[i]) { // 如果是素数
+        for (int j = i * i; j <= 1000; j += i) { // 将它的倍数标记为非素数
+            primes[j] = 0;
+        }
+    }
+}
+\end{lstlisting}
+    这样，我们就得到了一个标记了1000以内所有素数的数组。接下来，我们只需要读取输入的整数，然后直接查询这个数组即可。查询部分代码留作练习。
+\end{soln}
+
+有时候，题目并没有直接给出解决问题的步骤，但是我们可以通过分析问题，推导出一个明确的解决步骤，这时也可以使用模拟算法。还有的时候，题目给出的步骤并不高效，我们需要对其进行优化，使其在时间和空间上更加高效。
+
+\begin{example}
+    给定一个n，试着求下列表达式的值：
+    $$42 \times \sum_{i=1}^{n} \sum_{j=1}^{n}(i+j)(ij) , 1\leqslant n \leqslant 998244353 $$
+
+    提示：若$i$和$j$取值无关，则有$\sum_i \sum_j f(i)g(j) =( \sum_i f(i)) (\sum_j g(j))$
+
+    \textbf{输入}：一行，一个整数n。
+
+    \textbf{输出}：一行，一个整数，表示结果。
+\end{example}
+
+\begin{soln}
+    分析上述题目，如果用双重循环枚举$i$和$j$，时间复杂度是$O(n^2)$。我们已经知道，$n$的最大值是998244353，这个数量级的平方显然是无法接受的。我们需要对题目进行分析，推导出一个更高效的计算方法。另一方面，整数\texttt{int}的范围是$-2^{31}$到$2^{31}-1$，大约是$-21$亿到$21$亿，而题目中要求的结果显然远远超过了这个范围，因此我们需要使用更大范围的整数类型\texttt{long long}，该数据类型的范围大约是$-9$万亿到$9$万亿，题目中的结果应该在这个范围内。
+
+    所以要求解这个问题，我们可以先将表达式进行展开。展开的过程略，总之最终结果是$7n^2(n+1)^2(2n+1)$。直接输出这个结果即可。
+
+    代码过于简单，留作练习。
+\end{soln}
+
+\begin{problem}
+  小A正在做一道数学题，需要计算从 1 到 n 的所有整数的“数字和”。  
+  例如，当 n=12 时，1到12 的数字依次为  
+  $$1,\;2,\;3,\;4,\;5,\;6,\;7,\;8,\;9,\;1,\;0,\;1,\;1,\;1,\;2$$  
+  它们的数字和为  
+  $$1+2+3+4+5+6+7+8+9+1+0+1+1+1+2=51$$  
+  由于 n 可能很大，小 A 希望你用程序来模拟这个累加过程。
+
+  \textbf{输入}：一行，一个正整数 n（$1\le n\le 10^6$）。
+
+  \textbf{输出}：一行，一个整数，表示 1到n 所有数字的数字和。
+\end{problem}
+
+\subsection{枚举算法}
+
+枚举算法是通过列举所有可能的解来找到问题的答案。该类算法适用于\textbf{问题规模较小}，或者\textbf{需要找到所有可能解}的场景。因此，枚举算法也叫“暴力”算法。但是由于枚举算法的时间复杂度通常非常高，因此我们往往把它当作一种最后的手段。
+
+\begin{example}
+公鸡每只5元，母鸡每只3元，小鸡三只1元，100元钱买100只鸡，请问公鸡、母鸡、小鸡各买多少只刚好凑足100元钱？请编写程序计算所有可能的购买方案。
+
+\textbf{输入}：无。
+
+\textbf{输出}：每行三个整数，分别表示公鸡、母鸡、小鸡的数量。按公鸡数量从小到大排序输出。
+\end{example}
+
+\begin{soln}
+    该问题实际上可以抽象为以下方程组：
+    $$\begin{cases}
+        x + y + z = 100 \\
+        5x + 3y + \frac{1}{3}z = 100
+    \end{cases}$$
+    其中，$x$表示公鸡的数量，$y$表示母鸡的数量，$z$表示小鸡的数量。一个简单的思路是写一个双重循环，枚举公鸡和母鸡的数量，然后计算出小鸡的数量，最后判断是否满足条件。显然，上述题目中公鸡和母鸡的数量都不会超过20，因此枚举的时间复杂度$O(n^2)$是可以接受的。
+
+    当然，如果我们能通过分析，推导出一个更高效的枚举方法，那就更好了。实际上我们发现上述方程组中的$z$系数是个分数，着实恼人。我们可以将方程组两边同时乘以3，得到：
+    $$\begin{cases}
+        x + y + z = 100 \\
+        15x + 9y + z = 300
+    \end{cases}$$
+    这样，我们就可以通过消元法，消去$z$并进一步化简，得到：
+    $$7x + 4y = 100$$
+    现在，我们只需要枚举$x$，然后计算出$y$，最后计算出$z$，并判断它们是否为非负整数即可。这样，我们的枚举就从双重循环变成了单重循环，时间复杂度从$O(n^2)$降到了$O(n)$。更进一步地，把$y$移到等式右边，我们发现$7x$必须是$25-y$的4的倍数，因此我们可以直接以4为步长枚举$x$，这样就可以进一步减少枚举的次数。
+
+    代码实现如下：
+\begin{lstlisting}[language=C++]
+for (int x = 0; x <= 25; x += 4) { // 枚举公鸡数量
+    int y = (100 - 7 * x) / 4; // 计算母鸡数量
+    int z = 100 - x - y; // 计算小鸡数量
+    if (y >= 0 && z >= 0 && (100 - 7 * x) % 4 == 0) { // 判断是否为非负整数
+        cout << x << " " << y << " " << z << endl; // 输出结果
+    }
+}
+\end{lstlisting}
+\end{soln}
+
+\begin{problem}
+  给定一个长度为 $n$ 的正整数序列 $a_1,a_2,\dots ,a_n$，请找出其中和为偶数的所有二元组 $(i,j)$ 的数量，其中 $1\le i<j\le n$。
+
+  \textbf{输入}：  
+  第一行一个整数 $n\;(2\le n\le 2\,000)$。  
+  第二行 $n$ 个空格分隔的正整数 $a_i\;(1\le a_i\le 10^9)$。
+
+  \textbf{输出}：  
+  一行，一个整数，表示满足条件的二元组个数。
+\end{problem}
+
+\subsection{贪心算法}
+
+贪心算法是一种在每一步选择中都采取当前状态下最好或最优（即最有利）的选择，从而希望导致结果是全局最好或最优的算法。该类算法适用于\textbf{问题可以分解为若干子问题}，且\textbf{每个子问题的局部最优解能构成全局最优解}的场景。需要注意的是，该算法并不是总能得到最优解，因此我们在使用的时候应当证明其正确性。
+
+\begin{example}
+有一个理发师要为一群顾客理发。每个顾客都有一个理发时间，理发师希望通过合理安排顾客的理发顺序，使得所有顾客的平均等待时间最小。请编写程序，计算最小的平均等待时间。
+
+\textbf{输入}：第一行一个整数n，表示顾客的数量；第二行n个空格分隔的整数，表示每个顾客的理发时间。
+
+\textbf{输出}：一行，一个整数，表示最小的平均等待时间（向下取整）。
+\end{example}
+
+\begin{soln}
+    该问题可以通过贪心算法来解决。我们可以将顾客按照理发时间从小到大排序，然后依次为每个顾客理发。这样，理发时间较短的顾客会先被理发，从而减少了后续顾客的等待时间。
+
+    上述算法的证明非常简单。不妨设有n个顾客，其理发时间分别为$t_1,t_2,\dots,t_n$。对于排在第$i$个顾客，他的等待时间为前面所有顾客的理发时间之和，即：
+    $$W_i = \sum_{j=1}^{i-1} t_j$$
+    因此，所有顾客的总等待时间为：
+    $$W = \sum_{i=1}^{n} W_i = \sum_{i=1}^{n} \sum_{j=1}^{i-1} t_j$$
+    我们可以交换求和顺序，得到：
+    $$W = \sum_{j=1}^{n} t_j \cdot (n - j)$$
+    上述乘积求最小值看起来非常困难。但是我们只需要利用排序不等式：顺序和大于乱序和大于反序和。也就是说，我们只需要将$t_j$按从小到大排序，就能使得总等待时间最小。
+
+    代码实现如下：
+\begin{lstlisting}[language=C++]
+vector<int> times(n); // 输入的理发时间
+sort(times.begin(), times.end()); // 按理发时间从小到大排序
+int total_wait = 0; // 总等待时间
+for (int time : times) {
+    total_wait += time * (n - 1); // 剩余顾客的总等待时间
+    n--; // 剩余顾客数量减少
+}
+int average_wait = total_wait / n; // 计算平均等待时间
+\end{lstlisting}
+\end{soln}
+
+\begin{problem}
+  你在考试，该考试动态收卷。有 $n$ 个题目，第 $i$ 个题目需要耗时 $t_i$ 分钟，必须在第 $d_i$ 分钟之前完成（$t_i\le d_i$）。  
+  你一次只能做1个题，且中途不能中断。你最多可以做完多少题目？
+
+  \textbf{输入}：  
+  第一行一个整数 $n\;(1\le n\le 10^5)$。  
+  接下来 $n$ 行，每行两个整数 $t_i,d_i\;(1\le t_i\le d_i\le 10^9)$。
+
+  \textbf{输出}：  
+  一行，一个整数，表示最多能完成的题目数量。
+\end{problem}
+
+\subsection{分治（递归算法）}
+
+分治是一种将复杂问题分解为更简单子问题的方法。它适用于\textbf{问题可以分解为若干个规模较小且解决方法几乎一致的子问题}，且\textbf{这些子问题相互独立}的场景。分治通常通过递归来实现，即函数调用自身来解决子问题。
+
+如果子问题之间不相互独立，或者子问题的解决方法不一致，那么就不适合使用分治算法。对于前者，我们可以考虑使用动态规划来解决。
+
+\begin{example}
+    现有一堆芯片需要测试。每个芯片要么是好的，要么是坏的。现在有一种测试方法，可以将两个芯片放在一起进行测试。好的芯片总是能够正确地测试另一个芯片，而坏的芯片则无法保证测试结果的正确性。已经知道好芯片的数量比坏芯片多。请设计算法，用最少的测试次数找出一个好的芯片。
+
+    （这个我真不知道怎么撰写一个合适的输入输出格式，见谅）
+\end{example}
+
+\begin{soln}
+    最笨蛋的方法：取出一个芯片，用剩下的芯片依次测试它。如果它被至少一半的芯片报告为坏的，那么它就是坏的；否则，它就是好的。然而，我们的目标是用最少的测试次数找出一个好的芯片，如果一个人运气极差，那么可能需要约$n^2/2$次测试才能找到一个好的芯片，这显然不是最优解。
+
+    我们可以使用类似淘汰赛的分治方式来找出一个好的芯片。我们将所有芯片两两配对进行测试，测试结果有三种可能：
+    \begin{itemize}
+        \item 两个芯片都报告对方是好的，那么它们要么都是好的，要么都是坏的。
+        \item 一个芯片报告另一个是好的，而另一个报告第一个是坏的，那么至少有一个是坏的。
+        \item 两个芯片都报告对方是坏的，那么至少有一个是坏的。
+    \end{itemize}
+
+    如果两个芯片都报告对方是好的，那么我们随机保留其中一个芯片并扔掉另一个（因为它们要么都是好的，要么都是坏的，这样并不会影响任何结果）；否则，就把两个全部扔掉。容易证明，这样一轮测试下来，剩下的芯片中好芯片的数量仍然多于坏芯片的数量。我们可以重复这个过程，直到只剩下一个芯片为止。这个芯片必然是好的。上述过程的时间复杂度是$O(n)$。
+\end{soln}
+
+\begin{problem}
+  给定一个长度为 $n$ 的排列 $p_1,p_2,\dots ,p_n$，请统计其中逆序对的个数。  
+  逆序对定义为满足 $1\le i<j\le n$ 且 $p_i>p_j$ 的下标对 $(i,j)$。
+
+  \textbf{输入}：  
+  第一行一个整数 $n\;(1\le n\le 2\times 10^5)$。  
+  第二行 $n$ 个空格分隔的整数，表示排列 $p$。
+
+  \textbf{输出}：  
+  一行，一个整数，表示逆序对的总数。
+\end{problem}
+
+\subsection{动态规划（递推算法）}
+
+递推指的是通过已知的结果，推导出未知的结果。动态规划是一种将复杂问题分解为更简单子问题的方法。它适用于\textbf{问题可以分解为重叠子问题}、\textbf{子问题的最优解可以构成原问题的最优解}的场景。动态规划通常通过构建一个表格来存储子问题的解，从而避免重复计算，提高效率。
+
+几乎100\%的递推问题都是动态规划问题，或者可以通过动态规划来节省运算时间。
+
+动态规划问题的一般解决步骤如下：
+\begin{enumerate}
+    \item 定义状态：确定用于表示子问题的变量。
+    \item 状态转移方程：找出状态之间的关系，通常是递推公式。
+    \item 边界条件：确定初始状态的值。
+    \item 计算顺序：决定计算状态的顺序，通常是从小到大。
+    \item 实现代码：将上述步骤转化为代码实现。
+\end{enumerate}
+
+\begin{example}
+    小明正在爬楼梯。小明每次可能爬1级台阶，也可能爬2级台阶。假设小明要爬n级台阶，请问他有多少种不同的爬楼梯方式？
+
+    \textbf{输入}：一行，一个整数n，表示台阶的数量。
+
+    \textbf{输出}：一行，一个整数，表示不同的爬楼梯方式。
+\end{example}
+
+\begin{soln}
+    该问题可以通过动态规划来解决。我们可以定义一个数组\texttt{dp}，其中\texttt{dp[i]}表示爬到第$i$级台阶的不同方式数。显然，\texttt{dp[0]=1}（不需要爬任何台阶），\texttt{dp[1]=1}（只有一种方式爬到第一级台阶）。对于$i \geq 2$，我们可以通过以下递推关系来计算\texttt{dp[i]}：
+    $$dp[i] = dp[i-1] + dp[i-2]$$
+    这是因为要到达第$i$级台阶，可以从第$i-1$级台阶爬1级上来，或者从第$i-2$级台阶爬2级上来。
+
+    代码实现如下：
+\begin{lstlisting}[language=C++]
+vector<int> dp(n + 1, 0);
+dp[0] = 1; // 爬到第0级台阶的方式
+dp[1] = 1; // 爬到第1级台阶的方式
+for (int i = 2; i <= n; ++i) {
+    dp[i] = dp[i - 1] + dp[i - 2]; // 递推公式
+}
+\end{lstlisting}
+\end{soln}
+
+有些动态规划问题比较困难，需要仔细分析问题，找出合适的状态和递推关系。
+
+\begin{example}
+    给定一个整数序列。定义\textbf{子序列}为从这个母序列中删除一些元素（也可以不删除）后，剩下的元素按原来的顺序排列形成的序列。现在要求出它的一个子序列，该子序列的每一个元素都大于等于前一个元素，且该子序列的长度尽可能大。请编写程序，计算这个子序列的长度。
+
+    \textbf{输入}：第一行一个整数n，表示序列的长度；第二行n个空格分隔的整数，表示序列的元素。
+
+    \textbf{输出}：一行，一个整数，表示最长非降子序列的长度。
+\end{example}
+
+\begin{soln}
+    上述问题就是经典的\textbf{最长非降子序列}问题。这个问题向来是萌新杀手，难点在怎么定义状态和递推关系。能够自己推导出状态和递推关系的同学，已经掌握了动态规划的精髓。
+
+    下面我们来分析这个问题。一个朴素的想法是，不妨设\texttt{dp[i]}表示以第$i$个元素结尾的最长非降子序列的长度。对于任何元素，我们都遍历它前面的所有元素，如果前面的元素$A_j$小于等于当前元素$A_i$，那么我们就把$A_i$接到$A_j$的后面，这样就形成了一个更长的非降子序列。因此，我们可以得到以下递推关系：
+    $$ \forall A_j \leq A_i, \forall j < i, dp[i] = \max(dp[j] + 1) $$
+    代码写出来如下：
+\begin{lstlisting}[language=C++]
+vector<int> dp(n, 1); // 初始化dp数组，初始值为1
+for (int i = 1; i < n; ++i) { // 遍历每个元素
+    for (int j = 0; j < i; ++j) { // 遍历前面的元素
+        if (A[j] <= A[i]) { // 如果前面的元素小于等于当前元素
+            dp[i] = max(dp[i], dp[j] + 1); // 更新dp[i]
+        }
+    }
+}
+\end{lstlisting}
+    如果不懂，可以举一个例子，在纸上或者脑子里模拟一下上述过程，大概就能理解了。上述算法的时间复杂度是$O(n^2)$，对于$n$在几千以内的情况是可以接受的。
+
+    回到刚才，我们是用枚举法来求符合条件的$j$，进而求出\texttt{dp[i]}。如果我们能用更高效的方法来求出符合条件的$j$，就能进一步提高算法效率。我们知道，枚举是很笨的，有没有更高效的算法来解决这个问题呢？答案是有的。
+
+    我们跳出“模拟”的思维，换个角度来看这个问题。我们不再关心这个长度是怎么一步步推出来的，而是直接关注长度本身：\textbf{如果我们想构造一个尽可能长的非降子序列，那么在每一步，我们都希望这个序列的“尾巴”尽可能小，这样后面才能接上更多的数。}
+
+    局势瞬间明朗了起来。我们可以维护一个数组\texttt{tails}，其中\texttt{tails[k]}表示长度为$k+1$的非降子序列的最小结尾元素。怎么构建这个数组呢？我们只需要从左往右遍历原序列，对于每一个元素$A_i$，我们在\texttt{tails}中找到\textbf{第一个}大于$A_i$的元素，并将其替换为$A_i$。如果没有找到，则将$A_i$添加到\texttt{tails}的末尾。这样，\texttt{tails}数组的长度就是最长非降子序列的长度，顺便还能得到一个这样的子序列。
+
+    容易证明，\texttt{tails}数组是严格非降的，因此我们可以使用二分查找来提高查找效率。这样，整个算法的时间复杂度就降到了$O(n \log n)$。
+
+    \begin{lstlisting}[language=C++]
+vector<int> nums = ...; // 输入的整数序列
+vector<int> tails;
+for (int num : nums) {
+    auto it = upper_bound(tails.begin(), tails.end(), num); // 找到第一个 > num 的位置
+    if (it == tails.end()) {
+        tails.push_back(num); // 可以扩展序列
+    } else {
+        *it = num; // 替换掉更大的末尾
+    }
+}
+    \end{lstlisting}
+\end{soln}
+
+\begin{problem}
+  给你一个由小写字母组成的字符串 $s$，长度 $n$（$1\le n\le 1000$）。  
+  定义一个子序列是回文的，当且仅当把它从左到右读和从右到左读完全相同。  
+  请计算 $s$ 的最长回文子序列的长度。
+
+  \textbf{输入}：  
+  一行，一个仅含小写字母的字符串 $s$。
+
+  \textbf{输出}：  
+  一行，一个整数，表示最长回文子序列的长度。
+\end{problem}
+
+\subsection{高精度算法}
+
+高精度算法实际上并不能称之为一种算法类型，而是一种处理大数的技术。它适用于\textbf{需要处理超出基本数据类型范围的整数}的场景。高精度算法通常通过将大数拆分为多个较小的部分来存储和计算，从而避免溢出问题。
+
+常见做法可以总结为：用字符串整体读入；分割大数为能处理的小数；列竖式，计算。或者说：
+
+\begin{itemize}
+    \item 加法减法：拆成多个部分，逐部分计算，注意进位。
+    \item 乘法：分治计算，注意进位。
+    \item 除法：模拟竖式除法，注意余数。
+\end{itemize}
+
+没什么例题可做。
+\begin{problem}
+    给定两个非常非常长的正整数，进行四则运算（加、减、乘、整除），并输出结果。保证减法结果非负。
+\end{problem}
+
+\section{排序专题}
+
+\subsection{冒泡排序}
+
+冒泡排序重复地遍历要排序的数列，一次比较两个元素，如果它们的顺序错误就把它们交换过来。遍历数列的工作是重复进行直到没有再需要交换，也就是说该数列已经排序完成。
+
+\begin{lstlisting}
+vector<int> arr = ...; // 输入的数组
+int n = arr.size();
+for (int i = 0; i < n - 1; ++i) {
+    for (int j = 0; j < n - i - 1; ++j) {
+        if (arr[j] > arr[j + 1]) {
+            swap(arr[j], arr[j + 1]); // 交换
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{选择排序}
+
+选择排序的工作原理是每次从未排序的部分中选择最小（或最大）的元素，放到已排序部分的末尾。
+
+\begin{lstlisting}
+vector<int> arr = ...; // 输入的数组
+int n = arr.size();
+for (int i = 0; i < n - 1; ++i) {
+    int min_idx = i; // 假设当前元素是最小的
+    for (int j = i + 1; j < n; ++j) {
+        if (arr[j] < arr[min_idx]) {
+            min_idx = j; // 更新最小元素的索引
+        }
+    }
+    swap(arr[i], arr[min_idx]); // 交换
+}
+\end{lstlisting}
+
+\subsection{插入排序}
+
+插入排序的工作原理是从左向右地构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。
+
+\begin{lstlisting}
+for (int i = 1; i < n; ++i) {
+    int key = arr[i]; // 当前元素
+    int j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+        arr[j + 1] = arr[j]; // 向后移动
+        j--;
+    }
+    arr[j + 1] = key; // 插入
+}
+\end{lstlisting}
+
+\subsection{快速排序}
+
+快速排序的工作原理是通过一个“基准”元素将数组分成两部分，左边部分的元素都小于基准，右边部分的元素都大于基准，然后递归地对这两部分进行排序。快速排序是一种分治算法。
+
+\begin{lstlisting}
+void quicksort(int left, int right) {
+    if (left >= right) return;
+    int pivot = arr[(left + right) / 2]; // 选择基准
+    int i = left, j = right;
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+        if (i <= j) {
+            swap(arr[i], arr[j]); // 交换
+            i++;
+            j--;
+        }
+    }
+    quicksort(left, j); // 递归排序左半部分
+    quicksort(i, right); // 递归排序右半部分
+}
+\end{lstlisting}
+
+\subsection{归并排序}
+
+归并排序的工作原理是将数组分成两半，分别对这两半进行排序，然后将排序好的两半合并在一起。归并排序也是一种分治算法。
+
+\begin{lstlisting}
+void merge(int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    vector<int> L(n1), R(n2);
+    for (int i = 0; i < n1; ++i) L[i] = arr[left + i];
+    for (int j = 0; j < n2; ++j) R[j] = arr[mid + 1 + j];
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) arr[k++] = L[i++];
+        else arr[k++] = R[j++];
+    }
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}
+void mergesort(int left, int right) {
+    if (left >= right) return;
+    int mid = left + (right - left) / 2;
+    mergesort(left, mid); // 递归排序左半部分
+    mergesort(mid + 1, right); // 递归排序右半部分
+    merge(left, mid, right); // 合并
+}
+\end{lstlisting}
+
+\subsection{堆排序}
+
+堆排序的工作原理是将数组构建成一个最大堆（或最小堆），然后不断地将堆顶元素与数组的最后一个元素交换，并缩小堆的范围，重新调整堆，直到整个数组有序。
+
+\begin{lstlisting}
+void heapify(int n, int i) {
+    int largest = i; // 初始化最大元素为根节点
+    int left = 2 * i + 1; // 左子节点
+    int right = 2 * i + 2; // 右子节点
+    if (left < n && arr[left] > arr[largest]) largest = left;
+    if (right < n && arr[right] > arr[largest]) largest = right;
+    if (largest != i) {
+        swap(arr[i], arr[largest]); // 交换
+        heapify(n, largest); // 递归调整子树
+    }
+}
+void heapsort() {
+    int n = arr.size();
+    for (int i = n / 2 - 1; i >= 0; --i) heapify(n, i); // 构建最大堆
+    for (int i = n - 1; i > 0; --i) {
+        swap(arr[0], arr[i]); // 交换堆顶和最后一个元素
+        heapify(i, 0); // 重新调整堆
+    }
+}
+\end{lstlisting}
+
+\subsection{各种排序的效率比较}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{c|ccc}
+\hline
+排序算法 & 时间复杂度（平均） & 时间复杂度（最坏） & 空间复杂度 \\
+\hline
+冒泡排序 & $\Theta(n^2)$ & $O(n^2)$ & $O(1)$ \\
+选择排序 & $\Theta(n^2)$ & $O(n^2)$ & $O(1)$ \\
+插入排序 & $\Theta(n^2)$ & $O(n^2)$ & $O(1)$ \\
+快速排序 & $\Theta(n \log n)$ & $O(n^2)$ & $O(\log n)$ \\
+归并排序 & $\Theta(n \log n)$ & $O(n \log n)$ & $O(n)$ \\
+堆排序 & $\Theta(n \log n)$ & $O(n \log n)$ & $O(1)$ \\
+\hline
+\end{tabular}
+\caption{常见排序算法的时间和空间复杂度比较}
+\end{table}
+
+由上表可见，快速排序在平均情况下表现较好，但在最坏情况下可能退化为$O(n^2)$。归并排序和堆排序在最坏情况下也能保持$O(n \log n)$的时间复杂度。冒泡排序、选择排序和插入排序由于其简单性，适合处理小规模数据，但对于大规模数据则效率较低。
+
+对于大多数情况，我们最好不要手写排序算法，而是直接使用标准库中的排序函数，如C++的\texttt{std::sort}，它通常混合了多种排序算法，能够高效地处理各种规模的数据。
+
+\section{搜索专题}
+
+\subsection{线性搜索}
+
+线性搜索是一种最简单的搜索算法，它通过逐个检查每个元素来查找目标值。该算法适用于\textbf{数据量较小}或\textbf{数据无序}的场景。
+
+\begin{lstlisting}
+vector<int> arr = ...; // 输入的数组
+int target = ...; // 目标值
+for (int i = 0; i < arr.size(); ++i) {
+    if (arr[i] == target) {
+        cout << "Found at index " << i << endl;
+        break;
+    }
+}
+\end{lstlisting}
+
+\subsection{二分搜索}
+
+二分查找是一种高效的搜索算法，适用于\textbf{有序数组}。它通过不断地将搜索范围缩小一半来查找目标值。二分查找也是一种分治算法。
+
+\begin{lstlisting}
+vector<int> arr = ...; // 输入的有序数组
+int target = ...; // 目标值
+int left = 0, right = arr.size() - 1;
+while (left <= right) {
+    int mid = left + (right - left) / 2; // 防止溢出
+    if (arr[mid] == target) {
+        cout << "Found at index " << mid << endl;
+        break;
+    } else if (arr[mid] < target) {
+        left = mid + 1; // 目标在右半部分
+    } else {
+        right = mid - 1; // 目标在左半部分
+    }
+}
+\end{lstlisting}
+
+\subsection{DFS和BFS}
+
+深度优先搜索从一个起始节点开始，沿着每个分支尽可能深地搜索，直到到达叶子节点或没有未访问的邻居为止，然后回溯到上一个节点继续搜索。广度优先搜索则首先访问所有邻居节点，然后再逐层向外扩展，直到找到目标节点或遍历完所有节点。
+
+对于大一学生，我们不提供上述两种算法具体的代码实现。
+
+\subsection{快速选择}
+
+快速选择是一种用于在无序数组中查找第k小（或第k大）元素的算法。它基于快速排序的分治思想，通过选择一个“基准”元素，将数组分成两部分，然后递归地在包含第k小元素的部分继续搜索。
+
+\begin{lstlisting}
+int quickselect(vector<int>& arr, int left, int right, int k) {
+    if (left == right) return arr[left]; // 只有一个元素
+    int pivot = arr[(left + right) / 2]; // 选择基准
+    int i = left, j = right;
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+        if (i <= j) {
+            swap(arr[i], arr[j]); // 交换
+            i++;
+            j--;
+        }
+    }
+    if (k <= j) return quickselect(arr, left, j, k); // 在左半部分继续搜索
+    if (k >= i) return quickselect(arr, i, right, k); // 在右半部分继续搜索
+    return arr[k]; // 找到第k小元素
+}
+\end{lstlisting}
+
+\subsection{哈希搜索}
+
+哈希搜索通过将数据映射到一个固定大小的数组（哈希表）中来实现快速查找。它适用于\textbf{需要频繁插入、删除和查找}的场景。哈希表的平均时间复杂度为$O(1)$，但在最坏情况下可能退化为$O(n)$。我们通常使用\texttt{STL}中的\texttt{unordered\_map}或\texttt{unordered\_set}来实现哈希表。
+
+\begin{lstlisting}
+unordered_map<int, int> hash_map; // 创建哈希表
+hash_map[key] = value; // 插入或更新键值对
+if (hash_map.find(key) != hash_map.end()) { // 查找键
+    cout << "Found: " << hash_map[key] << endl;
+}
+hash_map.erase(key); // 删除键值对
+\end{lstlisting}
+
+\subsection{搜索效率比较}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{c|c|c}
+\hline
+搜索算法 & 适用场景 & 时间复杂度 \\
+\hline
+线性搜索 & 数据量小或无序 & $O(n)$ \\
+二分搜索 & 有序数组 & $O(\log n)$ \\
+DFS & 图或树的遍历 & $O(V + E)$ \\
+BFS & 图或树的遍历 & $O(V + E)$ \\
+快速选择 & 查找第k小元素 & $O(n)$（平均） \\
+哈希搜索 & 频繁插入、删除和查找 & $O(1)$（平均） \\
+\hline
+\end{tabular}
+\caption{常见搜索算法的适用场景和时间复杂度比较}
+\end{table}
+
+\end{document}
