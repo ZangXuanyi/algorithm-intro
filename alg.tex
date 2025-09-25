@@ -94,7 +94,7 @@
 
 一般认为，程序由数据结构和算法两部分组成。数据结构是组织和存储数据的方式，而\textbf{算法}指的是解决问题的步骤和方法。它们在计算机科学中起着至关重要的作用，帮助我们高效地处理数据和执行任务。在考试中，理解和应用算法是关键技能。本文针对计算概论A课程的考察范围，简单介绍了几种常见的算法类型及其应用。
 
-本文的代码示例均是\textbf{不完整}的\texttt{C++}代码片段，读者需要自行补全。
+本文的代码示例大多是\textbf{不完整}的\texttt{C++}代码片段，读者需要自行补全。
 
 \section{算法基础知识}
 
@@ -104,9 +104,9 @@
 
 一般的，有三种符号来表示算法的复杂度：
 \begin{itemize}
-    \item 大O符号（$O$）：表示算法的渐进上界，描述在最坏情况下的复杂度。
-    \item 大Omega符号（$\Omega$）：表示算法的渐进下界，描述在最好情况下的复杂度。
-    \item 大Theta符号（$\Theta$）：表示算法的渐进紧确界，描述在平均情况下的复杂度。
+    \item 大O符号（$O$）：表示算法的渐近上界，描述在最坏情况下的复杂度。
+    \item 大Omega符号（$\Omega$）：表示算法的渐近下界，描述在最好情况下的复杂度。
+    \item 大Theta符号（$\Theta$）：表示算法的渐近紧确界，描述在平均情况下的复杂度。
 \end{itemize}
 一般地，我们用n表示问题的规模，而这些符号后面跟着的函数则表示随着n的增长，算法复杂度的增长趋势。例如，$O(n^2)$表示算法的时间复杂度在最坏情况下是平方级别的，而具体的常数和低阶项等则被忽略。
 
@@ -114,47 +114,263 @@
 
 STL（Standard Template Library）是C++标准库的一部分，提供了一组通用的模板类和函数，用于数据结构和算法的实现。
 
-对于大一而言，我们主要关注以下数据结构：
-\begin{itemize}
-    \item 普通数组：用\texttt{vector}来代替传统的数组，提供动态大小和丰富的操作方法。
-    \item 字符串：用\texttt{string}来处理字符串，提供方便的字符串操作函数。
-    \item 需要长期排序：用\texttt{set}和\texttt{map}来存储有序集合和键值对，这两个数据结构天然有序。
-    \item 需要快速查找：用\texttt{unordered\_set}和\texttt{unordered\_map}来存储无序集合和键值对，这两个数据结构基于哈希表，提供平均$O(1)$的查找时间。
-    \item 需要最大、最小：用\texttt{priority\_queue}来实现优先队列，队列首就是最大或最小元素。
-    \item 需要在头尾插入删除：用\texttt{deque}来实现双端队列，支持在两端高效地插入和删除元素。
-    \item 需要在中间频繁插入删除：用\texttt{list}来实现双向链表，支持在任意位置高效地插入和删除元素。
-\end{itemize}
+对于大一而言，我们主要关注以下数据结构：表\ref{tab:stl}。
+\begin{table}[ht]\small
+    \centering
+    \begin{tabular}{ccc}
+        \hline
+        需求 & 使用的数据结构 & 说明 \\
+        \hline
+        普通数组 & \texttt{vector<T>} & 不擅长在中间插入删除 \\
+        字符串 & \texttt{string} & - \\
+        按键值对查找 & \texttt{unordered\_map<K, V>} & 哈希表，查找$O(1)$  \\
+        按键值对查找（保序） & \texttt{map<K, V>} & 红黑树，查找$O(\log n)$  \\
+        去重/判断存在性 & \texttt{unordered\_set<T>} & 哈希表，查找$O(1)$ \\
+        去重/判断存在性（保序） & \texttt{set<T>} & 红黑树，查找$O(\log n)$ \\
+        最大/最小 & \texttt{priority\_queue<T>} & 平衡二叉树，插入删除$O(\log n)$\\
+        头尾插入删除 & \texttt{deque<T>} & - \\
+        中间插入删除 & \texttt{list<T>} & 不擅长检索 \\ 
+        \hline
+    \end{tabular}
+    \caption{常见STL容器}
+    \label{tab:stl}
+\end{table}
+
+值得注意的是，\texttt{priority\_queue}和\texttt{deque}以及\texttt{queue}、\texttt{stack}不仅是容器，还是“容器适配器”。我们可以手动指定底层容器（默认是\texttt{vector}），但不能直接访问底层容器的元素，只能通过其提供的接口进行操作，例如\texttt{push}、\texttt{pop}、\texttt{top}等。
+
+另一方面，\texttt{priority\_queue}默认是大顶堆，如果需要实现小顶堆，可以使用\texttt{greater<T>}作为比较器，例如：
+\begin{lstlisting}[language=C++]
+priority_queue<int, vector<int>, greater<int>> minHeap;
+\end{lstlisting}
 
 至于\texttt{STL}已经实现的算法，常见的有：
 \begin{itemize}
-    \item \texttt{std::sort}：排序元素。
-    \item \texttt{std::binary\_search}：二分查找元素。
-    \item \texttt{std::find}：查找元素，和二分查找相比不需要元素有序。
-    \item \texttt{std::count}：统计元素出现的次数。
-    \item \texttt{std::reverse}：反转元素顺序。
-    \item \texttt{std::accumulate}：计算元素的累加和。
-    \item \texttt{std::max\_element}：找到最大元素。
-    \item \texttt{std::min\_element}：找到最小元素。
-    \item \texttt{std::shuffle}：随机打乱元素顺序。
-    \item \texttt{std::unique}：去除重复元素。
-    \item \texttt{std::for\_each}：对每个元素执行操作。
-    \item \texttt{std::nth\_element}：找到第n小的元素。
-    \item \texttt{std::lower\_bound}：找到第一个不小于给定值的元素。
-    \item \texttt{std::upper\_bound}：找到第一个大于给定值的元素。
+    \item \texttt{std::sort}：排序元素。使用例如：
+    \begin{lstlisting}
+std::sort(v.begin(), v.end());
+    \end{lstlisting}
+
+    \item \texttt{std::binary\_search}：二分查找元素。使用例如
+    \begin{lstlisting}
+std::binary_search(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示在已排序的容器 \texttt{v} 中查找 \texttt{value} 是否存在。
+
+    \item \texttt{std::find}：查找元素，和二分查找相比不需要元素有序。使用例如
+    \begin{lstlisting}
+std::find(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示在容器 \texttt{v} 中查找 \texttt{value} 第一次出现的位置。
+
+    \item \texttt{std::remove}：移除指定元素。使用例如
+    \begin{lstlisting}
+std::remove(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示将容器 \texttt{v} 中所有等于 \texttt{value} 的元素移到容器的末尾，并返回新的逻辑结尾位置（并不实际删除元素）。
+
+    \item \texttt{std::erase}：删除指定元素。使用例如
+    \begin{lstlisting}
+v.erase(std::remove(v.begin(), v.end(), value), v.end())
+    \end{lstlisting}
+    表示删除容器 \texttt{v} 中所有等于 \texttt{value} 的元素（配合 \texttt{std::remove} 使用）。
+
+    \item \texttt{std::insert}：插入元素。使用例如
+    \begin{lstlisting}
+v.insert(position, value)
+    \end{lstlisting}
+    表示在容器 \texttt{v} 的指定位置 \texttt{position} 插入 \texttt{value}。
+
+    \item \texttt{std::count}：统计元素出现的次数。使用例如
+    \begin{lstlisting}
+std::count(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示统计容器 \texttt{v} 中 \texttt{value} 出现的次数。
+
+    \item \texttt{std::reverse}：反转元素顺序。使用例如
+    \begin{lstlisting}
+std::reverse(v.begin(), v.end())
+    \end{lstlisting}
+    表示反转容器 \texttt{v} 中元素的顺序。
+
+    \item \texttt{std::accumulate}：计算元素的累加和。使用例如
+    \begin{lstlisting}
+std::accumulate(v.begin(), v.end(), init)
+    \end{lstlisting}
+    表示计算容器 \texttt{v} 中所有元素的累加和，初始值为 \texttt{init}。
+
+    \item \texttt{std::max\_element}：找到最大元素。使用例如
+    \begin{lstlisting}
+std::max_element(v.begin(), v.end())
+    \end{lstlisting}
+    表示返回容器 \texttt{v} 中最大元素的迭代器。
+
+    \item \texttt{std::min\_element}：找到最小元素。使用例如
+    \begin{lstlisting}
+std::min_element(v.begin(), v.end())
+    \end{lstlisting}
+    表示返回容器 \texttt{v} 中最小元素的迭代器。
+
+    \item \texttt{std::unique}：去除重复元素。使用例如
+    \begin{lstlisting}
+v.erase(std::unique(v.begin(), v.end()), v.end())
+    \end{lstlisting}
+    表示去除容器 \texttt{v} 中相邻的重复元素（通常需要先排序）。然而我们通常会使用\texttt{std::set}或\texttt{std::unordered\_set}来实现去重，而不是用这个。
+
+    \item \texttt{std::for\_each}：对每个元素执行操作。使用例如
+    \begin{lstlisting}
+std::for_each(v.begin(), v.end(), func)
+    \end{lstlisting}
+    表示对容器 \texttt{v} 中的每个元素执行函数 \texttt{func}。然而我们通常使用范围for循环来实现这个功能：
+    \begin{lstlisting}
+for (auto &item : v) { // funcion body }
+    \end{lstlisting}
+
+    \item \texttt{std::nth\_element}：找到第 n 小的元素。使用例如
+    \begin{lstlisting}
+std::nth_element(v.begin(), v.begin() + n, v.end())
+    \end{lstlisting}
+    表示重新排列容器 \texttt{v}，使得第 \texttt{n} 小的元素位于第 \texttt{n} 个位置。
+
+    \item \texttt{std::lower\_bound}：找到第一个不小于给定值的元素。使用例如
+    \begin{lstlisting}
+std::lower_bound(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示在已排序的容器 \texttt{v} 中找到第一个不小于 \texttt{value} 的元素的迭代器。
+
+    \item \texttt{std::upper\_bound}：找到第一个大于给定值的元素。使用例如
+    \begin{lstlisting}
+std::upper_bound(v.begin(), v.end(), value)
+    \end{lstlisting}
+    表示在已排序的容器 \texttt{v} 中找到第一个大于 \texttt{value} 的元素的迭代器。
 \end{itemize}
 
-我个人非常建议同学们在考试的时候多使用\texttt{STL}。它不仅能够大大地简化代码，代码的执行效率往往也比手写的代码更高。\textbf{对于大一的学生而言，如果你使用了\texttt{STL}但是考试的时候出现了WA、TLE、MLE等问题，请重新审视你算法的正确性与高效性；如果你确信你的算法是正确且高效的但是还是出现TLE或MLE，则说明该题目并非你能够解决的，建议跳过，先做后面的题目。}
+{\color{red}在你使用STL之前，请务必确保你确实理解这两个名词，并能够用自己的语言解释出来：\textbf{指针}、\textbf{迭代器}。不理解指针，就无法理解迭代器；不理解迭代器，就等于你不理解STL容器和算法的本质，你只能把它们当作黑盒子来使用，这样很容易出错。如果你确实是这种人，那请务必不要使用STL。}
+
+我个人非常建议能够理解\texttt{STL}的同学们在考试的时候多使用\texttt{STL}。它不仅能够大大地简化代码，代码的执行效率往往也比手写的代码更高。\textbf{对于大一的学生而言，如果你使用了\texttt{STL}但是考试的时候出现了WA、TLE、MLE等问题，请重新审视你算法的正确性与高效性，并检查你的代码是否正确地表达了你的意思；如果你确信你的算法是正确且高效的但是还是出现TLE或MLE，则说明该题目并非你能够解决的，建议跳过，先做后面的题目。}
+
+
+
+\begin{example}
+    题目：
+
+    给定一个长度为N的整数序列，计算去掉所有最大值后剩余元素的和。
+
+    输入：一个整数N，表示序列的长度；接下来N个整数，表示序列的元素。
+
+    输出：一个整数，表示去掉所有最大值后剩余元素的和。
+
+    小明写了这样一段代码，但是WA了。请指出下列代码的bug，并使用两种办法修改bug。
+
+    已知：出现错误的输入是2 \ 2 \ 2，输出是2。而正确答案是0。
+\begin{lstlisting}[language=C++]
+#include<iostream>
+#include <iomanip>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int main(){
+    int N = 0;
+    int sum = 0;
+    cin >> N;
+    vector<int> v;
+    for(int i = 0; i < N; i++){ 
+        int j;
+        cin >> j;
+        v.push_back(j);
+    }
+    auto imax = max_element(v.begin(), v.end());
+    for (int i = 0; i < N; i++){
+        if(v[i] == *imax){
+            v[i] = 0;
+        }
+        sum = sum + v[i];
+    }
+    cout << sum << endl;
+    return 0;
+}
+\end{lstlisting}
+\end{example}
+
+\begin{soln}
+    为了解决上述问题，我们首先应该问自己一个问题：\textbf{迭代器到底是什么？}只要理解了这个问题，你就找到了bug所在。
+    
+    仔细观察下列代码：
+\begin{lstlisting}[language=C++]
+auto imax = max_element(v.begin(), v.end());
+for (int i = 0; i < N; i++){
+    if(v[i] == *imax){
+        v[i] = 0;
+    }
+    sum = sum +v[i];
+}
+\end{lstlisting}
+
+    上述代码中，\texttt{imax} 是一个迭代器，指向最大值的那个元素，看起来小明也知道。在循环中，\texttt{v[i] == *imax} 这个判断一开始确实是正确的；\textbf{但是，一旦你把 \texttt{v[i] = 0}，\texttt{*imax} 的值也变成了 0（因为 \texttt{imax} 仍然指向那个位置）}，进而导致后面所有等于原最大值的元素，都不再等于 \texttt{*imax}（现在是0），所以没有被清零。
+
+    最终这个问题就变成，只有一个最大值被清零，其余最大值被当成“非最大值”加进了 \texttt{sum}，导致结果错误。
+
+    看起来小明犯这个错误的原因大概是他并不知道迭代器是什么东西。
+
+    因此，想要改正这个bug，我们有以下两种方法：要么避免修改迭代器指向的值，要么避免使用迭代器。
+
+    避免修改迭代器指向的值的代码如下：
+\begin{lstlisting}[language=C++]
+auto imax = max_element(v.begin(), v.end());
+for (int i = 0; i < N; i++){
+    if(v[i] == *imax){
+        continue; // 直接跳过，不修改 v[i]
+    }
+    sum = sum +v[i];
+}
+\end{lstlisting}
+
+    避免使用迭代器的代码如下：
+\begin{lstlisting}[language=C++]
+int imax = *max_element(v.begin(), v.end()); // 直接拷贝最大值
+for (int i = 0; i < N; i++){
+    if(v[i] == imax){
+        v[i] = 0;
+    }
+    sum = sum +v[i];
+}
+\end{lstlisting}
+
+\end{soln}
+
+觉得眼熟？上述问题实际上就是在课程作业中出现的错误。上述代码用了\texttt{auto}等C++11的特性，说明小明看起来已经学过C++11了；从\texttt{v[i] == *imax}能看出，他也知道\texttt{imax}是个迭代器，这说明他并不是遇事不决就拿\texttt{auto}往上乱糊的人；然而，因为对迭代器的理解不够深入，最终还是导致了这个bug。因此，我们在用STL之前，一定要确保自己真真切切理解了迭代器的含义。
 
 \section{常见算法}
 
+\subsection{打表法}
+
+打表指的是预先计算出问题所有可能的结果，然后根据需要直接查表得出结果的方法。在日常生活中我们经常看到打表法的影子，例如速算20以内乘法的时候我们往往是预先已经记住了“$11\times 11 = 121$”等结果，而不是每一次都重新计算一遍。
+
+打表严格说来不能算是一个“算法”，因为实际上该方法并没有提供一个解决问题的手段，它只是把计算题做成了填空题。
+
+打表法的优势是其时间复杂度非常低，结合哈希表等数据结构，时间复杂度往往可以做到$O(1)$。打表法的缺点是它的空间复杂度往往很大，且实际上在大多数情况下因为可能的解太多了而并不实用，或者计算任务并非人力所能及\footnote{当然，如果你能做到拉马努金“有人托梦给我”然后直接出答案的水平，那就另当别论了。}。打表往往只在\textbf{问题规模非常小}、\textbf{问题的解数量非常有限}、\textbf{题目对时间的要求非常高}的场景下使用。我们也可以把打表法当作一种“最后的手段”，当我们实在想不出其他更好的算法时，可以考虑打表法。
+
+\begin{example}
+    给定一个整数n，计算1到n的阶乘（即$1\times 2\times 3\times \dots \times n$）。请编写程序，计算并输出结果。
+
+    \textbf{输入}：一行，一个整数n（$1\le n \le 20$）。
+
+    \textbf{输出}：一行，一个整数，表示1到n的阶乘。
+\end{example}
+
+\begin{soln}
+    理论而言我们可以打表。 由于题目中$n$的范围是1到20，我们可以预先计算出1到20的阶乘，然后将结果存储在一个数组中。这样，在程序运行时，我们只需要根据输入的$n$直接查表即可，时间复杂度为$O(1)$。当然，由于20的阶乘是一个非常大的数，已经超出了\texttt{int}的范围，因此我们需要使用\texttt{long long}来存储结果。‘
+
+    代码疑似有些过于简单了，留作练习。
+\end{soln}
+
 \subsection{模拟算法}
 
-模拟算法是最简单的算法之一。该算法的含义是通过模拟人类解决问题的实际过程来完成最终的计算任务。该类算法适用于\textbf{解决问题的步骤非常明确}的场景。
+模拟算法是最简单的算法之一。该算法的含义是通过模拟人类解决问题的实际过程来完成最终的计算任务。该类算法适用于\textbf{解决问题的步骤非常明确}的场景，也是后续许多算法的基础。不严格地说，所有的算法实际上都是模拟算法。
 
 \begin{example}
     素数在数学中是一个非常重要的概念，它指的是只能被1和它本身整除的自然数。素数在密码学、数据加密等领域有着广泛的应用。一般我们可以使用筛法找到素数：在一系列整数中，先找到最小的素数（2），然后将它的倍数都去掉；然后再找到下一个最小的素数（3），再将它的倍数都去掉；如此反复，直到所有的数都被处理完。请编写一个程序，这个程序接受一些整数，然后输出这些整数是不是素数。
     
-    \textbf{输入}：m+1行，第一行是一个整数m，表示接下来有m个整数需要判断；接下来的m行，每行一个整数n。n的数值在0到1000之间。
+    \textbf{输入}：m+1行，第一行是一个整/数m，表示接下来有m个整数需要判断；接下来的m行，每行一个整数n。n的数值在0到1000之间。
 
     \textbf{输出}：m行，每行一个字符串，表示对应的整数是不是素数。如果是素数，输出“YES”，否则输出“NO”，如果输入的是1，输出“NA”。
 \end{example}
@@ -213,7 +429,7 @@ for (int i = 2; i * i <= 1000; ++i) { // 遍历每个数
 
 \subsection{枚举算法}
 
-枚举算法是通过列举所有可能的解来找到问题的答案。该类算法适用于\textbf{问题规模较小}，或者\textbf{需要找到所有可能解}的场景。因此，枚举算法也叫“暴力”算法。但是由于枚举算法的时间复杂度通常非常高，因此我们往往把它当作一种最后的手段。
+枚举算法是通过列举所有可能的解来找到问题的答案。该类算法适用于\textbf{问题规模较小}，或者\textbf{需要找到所有可能解}的场景。因此，枚举算法也叫“暴力”算法。但是由于枚举算法的时间复杂度通常非常高，因此我们往往把它当作一种最后的手段。另外，在枚举的时候，也要尽可能对枚举过程进行优化，来减少枚举的次数。
 
 \begin{example}
 公鸡每只5元，母鸡每只3元，小鸡三只1元，100元钱买100只鸡，请问公鸡、母鸡、小鸡各买多少只刚好凑足100元钱？请编写程序计算所有可能的购买方案。
@@ -549,6 +765,37 @@ void quicksort(int left, int right) {
 }
 \end{lstlisting}
 
+受到快速排序的启发，出现了一种名为“快速选择”的算法。快速选择是一种用于在无序数组中查找第k小（或第k大）元素的算法。它基于快速排序的分治思想，通过选择一个“基准”元素，将数组分成两部分，然后递归地在包含第k小元素的部分继续搜索。快速选择也是一种分治算法，但它只关注找到第k小元素，而不是对整个数组进行排序。
+
+\begin{lstlisting}
+int quickselect(vector<int>& arr, int left, int right, int k) {
+    if (left == right) return arr[left]; // 只有一个元素
+    int pivot = arr[(left + right) / 2]; // 选择基准
+    int i = left, j = right;
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+        if (i <= j) {
+            swap(arr[i], arr[j]); // 交换
+            i++;
+            j--;
+        }
+    }
+    if (k <= j) return quickselect(arr, left, j, k); // 在左半部分继续搜索
+    if (k >= i) return quickselect(arr, i, right, k); // 在右半部分继续搜索
+    return arr[k]; // 找到第k小元素
+}
+\end{lstlisting}
+
+当然，如果使用STL的\texttt{nth\_element}函数，可以更简单地实现快速选择。
+\begin{lstlisting}
+vector<int> arr = ...; // 输入的数组
+int k = 2; // 举例：查找第3小元素（k从0开始）
+nth_element(arr.begin(), arr.begin() + k, arr.end()); // 部分排序
+int kth_smallest = arr[k]; // 第3小元素
+\end{lstlisting}
+值得注意的是，k是从0开始计数的。
+
 \subsection{归并排序}
 
 归并排序的工作原理是将数组分成两半，分别对这两半进行排序，然后将排序好的两半合并在一起。归并排序也是一种分治算法。
@@ -670,33 +917,11 @@ while (left <= right) {
 
 对于大一学生，我们不提供上述两种算法具体的代码实现。
 
-\subsection{快速选择}
-
-快速选择是一种用于在无序数组中查找第k小（或第k大）元素的算法。它基于快速排序的分治思想，通过选择一个“基准”元素，将数组分成两部分，然后递归地在包含第k小元素的部分继续搜索。
-
-\begin{lstlisting}
-int quickselect(vector<int>& arr, int left, int right, int k) {
-    if (left == right) return arr[left]; // 只有一个元素
-    int pivot = arr[(left + right) / 2]; // 选择基准
-    int i = left, j = right;
-    while (i <= j) {
-        while (arr[i] < pivot) i++;
-        while (arr[j] > pivot) j--;
-        if (i <= j) {
-            swap(arr[i], arr[j]); // 交换
-            i++;
-            j--;
-        }
-    }
-    if (k <= j) return quickselect(arr, left, j, k); // 在左半部分继续搜索
-    if (k >= i) return quickselect(arr, i, right, k); // 在右半部分继续搜索
-    return arr[k]; // 找到第k小元素
-}
-\end{lstlisting}
-
 \subsection{哈希搜索}
 
-哈希搜索通过将数据映射到一个固定大小的数组（哈希表）中来实现快速查找。它适用于\textbf{需要频繁插入、删除和查找}的场景。哈希表的平均时间复杂度为$O(1)$，但在最坏情况下可能退化为$O(n)$。我们通常使用\texttt{STL}中的\texttt{unordered\_map}或\texttt{unordered\_set}来实现哈希表。
+哈希搜索通过将数据映射到一个固定大小的数组（哈希表）中来实现快速查找。它适用于\textbf{需要频繁插入、删除和查找}的场景。哈希表的平均时间复杂度为$O(1)$，但在最坏情况下可能退化为$O(n)$。另外，在查找之前有一个建立哈希表的过程，这个过程是$O(n)$的；哈希表也有着较大的常数时间和较大的空间开销。
+
+我们通常使用\texttt{STL}中的\texttt{unordered\_map}或\texttt{unordered\_set}来实现哈希表，而不是手写哈希表。
 
 \begin{lstlisting}
 unordered_map<int, int> hash_map; // 创建哈希表
@@ -715,16 +940,17 @@ hash_map.erase(key); // 删除键值对
 \hline
 搜索算法 & 适用场景 & 时间复杂度 \\
 \hline
-线性搜索 & 数据量小或无序 & $O(n)$ \\
+线性搜索 & 数据量小且无序 & $O(n)$ \\
 二分搜索 & 有序数组 & $O(\log n)$ \\
 DFS & 图或树的遍历 & $O(V + E)$ \\
 BFS & 图或树的遍历 & $O(V + E)$ \\
-快速选择 & 查找第k小元素 & $O(n)$（平均） \\
-哈希搜索 & 频繁插入、删除和查找 & $O(1)$（平均） \\
+快速选择 & 查找第k小元素 & $O(n)$ \\
+哈希搜索 & 频繁插入、删除和查找 & $O(1)$ \\
 \hline
 \end{tabular}
 \caption{常见搜索算法的适用场景和时间复杂度比较}
 \end{table}
+如果数据规模比较小或者仅查找一次，则线性搜索更好；如果数据量小且有序，则二分搜索更好；如果数据量大且需要频繁查找，则哈希搜索更好。这是因为，在数据量大的情况下，哈希表的常数时间开销会被其高效的查找性能所抵消。
 
 \section{练习}
 
@@ -834,6 +1060,55 @@ BFS & 图或树的遍历 & $O(V + E)$ \\
   即可 $O(n)$ 求出所有 $F(k)$。
 \end{enumerate}
 
+\subsection{动态规划专门练习}
+
+由于动态规划难度较大，特设一组动态规划专门练习题。这些动态规划问题都是极为经典的DP问题，理解其做法有助于掌握动态规划的基本思路和技巧，并为后续更复杂的动态规划问题打下基础。
+
+\begin{enumerate}[label=\textbf{DP\arabic*.}]
+\item \textbf{0/1 背包问题}\\
+  题面：有 $n$ 件物品（$1\le n\le 2\,000$），第 $i$ 件重量 $w_i$，价值 $v_i$；背包容量 $W$（$1\le W\le 2\,000$）。每件物品至多选一次，求能装下的最大总价值。\\
+  输入：第一行 $n,W$；第二行 $n$ 个整数 $w_i$；第三行 $n$ 个整数 $v_i$。\\
+  输出：一行，一个整数。\\
+  提示：令 $dp[j]$ 表示容量为 $j$ 时能获得的最大价值，倒序更新
+  $$dp[j]=\max (dp[j],\,dp[j-w_i]+v_i),\qquad j=W\ldots w_i.$$
+  答案即 $\max dp[j]$，时空均可压至 $O(nW)$。
+
+\item \textbf{完全背包问题}\\
+  题面：给定 $n$ 种硬币（$1\le n\le 100$），第 $i$ 种面额为 $c_i$，数量无限；目标金额 $A$（$1\le A\le 10^4$）。求凑出 $A$ 所需最少硬币数，若无法凑出返回 $-1$。\\
+  输入：第一行 $n,A$；第二行 $n$ 个整数 $c_i$。\\
+  输出：一行，一个整数。\\
+  提示：设 $dp[j]$ 表示金额 $j$ 时的最少硬币数，初值 $\infty$，$dp[0]=0$。正序转移
+  $$dp[j]=\min\!\bigl(dp[j],\,dp[j-c_i]+1\bigr),\qquad j=c_i\ldots A.$$
+  若 $dp[A]=\infty$ 则输出 $-1$。
+
+\item \textbf{最长公共子序列（LIS）问题}\\
+  题面：给定两长度均不超过 $5\,000$ 的整数序列 $A,B$，求它们的最长公共子序列长度。\\
+  输入：第一行两个整数 $n,m$；第二行 $n$ 个整数表示 $A$；第三行 $m$ 个整数表示 $B$。\\
+  输出：一行，一个整数。\\
+  提示：$dp[i][j]$ 表示 $A[0\ldots i-1]$ 与 $B[0\ldots j-1]$ 的 LCS 长度。转移
+  $$dp[i][j]=\begin{cases}
+  dp[i-1][j-1]+1,&A[i-1]=B[j-1],\\[2pt]
+  \max(dp[i-1][j],\,dp[i][j-1]),&\text{otherwise}.
+  \end{cases}$$
+  滚动数组可把空间压到 $O(m)$。
+
+\item \textbf{区间 DP}\\
+  题面：一排 $n$ 堆石子（$2\le n\le 300$），第 $i$ 堆有 $a_i$ 颗。每次合并相邻两堆，代价为两堆石子总数。求把所有石子合并成一堆的最小总代价。\\
+  输入：第一行 $n$；第二行 $n$ 个整数 $a_i$。\\
+  输出：一行，一个整数。\\
+  提示：令 $dp[l][r]$ 表示合并区间 $[l,r]$ 的最小代价，$sum[l][r]$ 为石子总数。枚举分界点 $k$ 转移
+  $$dp[l][r]=\min_{l\le k<r}\!\bigl(dp[l][k]+dp[k+1][r]+sum[l][r]\bigr).$$
+  时间 $O(n^3)$，可四边形不等式优化至 $O(n^2)$。
+
+\item \textbf{最大子段和}\\
+  题面：给定长度 $n$（$1\le n\le 2\times10^5$）的整数数组 $a$，元素范围 $[-10^9,10^9]$，求连续子数组的最大和。\\
+  输入：第一行 $n$；第二行 $n$ 个整数。\\
+  输出：一行，一个整数。\\
+  提示：设 $cur$ 表示“以当前位置结尾”的最大子段和，全局维护 $ans$。递推
+  $$cur=\max(a_i,\,cur+a_i),\qquad ans=\max(ans,\,cur).$$
+  时间 $O(n)$，空间 $O(1)$。
+\end{enumerate}
+
 \section{练习题参考代码}
 
 \begin{enumerate}[label=\textbf{练习\arabic*.}]
@@ -915,7 +1190,7 @@ cout<<'#';
 \item \textbf{回文判定}：双指针从两端向中间走，遇到不等立即判 NO，走完则 YES。
 \begin{lstlisting}
 int l=0,r=s.size()-1;
-while(l<r) if(s[l++]!=s[r--]){cout<<"NO"; return;}
+while(l<r-l) if(s[l]!=s[r-l]){cout<<"NO"; return;} else l++;
 cout<<"YES";
 \end{lstlisting}
 
@@ -1056,5 +1331,66 @@ cout<<best;
 \end{lstlisting}
 \end{enumerate}
 
+\begin{enumerate}[label=\textbf{DP\arabic*.}]
+\item \textbf{0/1 背包最大价值}\\
+  经典 0/1 背包，倒序更新容量即可保证每件物品只选一次。
+\begin{lstlisting}
+int dp[W+1]={0};                    // 初始全 0
+for(int i=0;i<n;i++)
+    for(int j=W;j>=w[i];j--)        // 必须倒序
+        dp[j]=max(dp[j],dp[j-w[i]]+v[i]);
+cout<<*max_element(dp,dp+W+1);
+\end{lstlisting}
+
+\item \textbf{完全背包最少硬币}\\
+  完全背包求最小值，正序转移保证同一硬币可重复取。
+\begin{lstlisting}
+const int INF=0x3f3f3f3f;
+int dp[A+1];
+fill(dp,dp+A+1,INF); dp[0]=0;
+for(int i=0;i<n;i++)
+    for(int j=c[i];j<=A;j++)
+        dp[j]=min(dp[j],dp[j-c[i]]+1);
+cout<<(dp[A]==INF?-1:dp[A]);
+\end{lstlisting}
+
+\item \textbf{最长公共子序列}\\
+  二维 LCS，滚动数组压掉第一维。
+\begin{lstlisting}
+vector<int> dp(m+1,0),prev(m+1);
+for(int i=1;i<=n;i++){
+    prev=dp;
+    for(int j=1;j<=m;j++)
+        dp[j]=(A[i-1]==B[j-1]?prev[j-1]+1:max(dp[j-1],prev[j]));
+}
+cout<<dp[m];
+\end{lstlisting}
+
+\item \textbf{区间 DP——石子合并最小代价}\\
+  先算前缀和 $s[i]$，再用区间长度 $len$ 从小到大枚举。
+\begin{lstlisting}
+for(int i=1;i<=n;i++) prefix[i]=prefix[i-1]+a[i-1];
+auto sum=[&](int l,int r){return prefix[r+1]-prefix[l];};
+for(int len=2;len<=n;len++)
+    for(int l=0;l+len-1<n;l++){
+        int r=l+len-1;
+        dp[l][r]=INT_MAX;
+        for(int k=l;k<r;k++)
+            dp[l][r]=min(dp[l][r],dp[l][k]+dp[k+1][r]+sum(l,r));
+    }
+cout<<dp[0][n-1];
+\end{lstlisting}
+
+\item \textbf{最大子段和}\\
+  Kadane 算法，一次遍历维护当前段和和全局答案。
+\begin{lstlisting}
+long long cur=0,best=LLONG_MIN;
+for(int i=0;i<n;i++){
+    cur=max(1LL*a[i],cur+a[i]);
+    best=max(best,cur);
+}
+cout<<best;
+\end{lstlisting}
+\end{enumerate}
 
 \end{document}
